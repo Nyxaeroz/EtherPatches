@@ -16,7 +16,7 @@ void setup() {
   size(4000,2000);
   
   // LOAD YOUR IMAGE HERE
-  input = loadImage("shownotes1-7.png");
+  input = loadImage("example.png");
   image(input, 0, 0);
   w = input.width;
   h = input.height;
