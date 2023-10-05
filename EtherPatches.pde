@@ -3,20 +3,37 @@ PImage output;
 
 // THESE SHOULD MATCH THE DIMENSIONS OF THE CANVAS
 // MAKE SURE ITS LARGE ENOUGH FOR THE IMAGE YOU'RE PATCHING
-int w = 1000;
-int h = 2000;
+int w = 2*1920;
+int h = 1080;
 
 // parameters that set the sizes of the windows that check if we're still in the same blob
 // adjust these if your results are unsatisfactory (I've had good results with h=5 and v=20 or h=20 and v=20)
 int hpass_window = 5;
 int vpass_window = 20;
 
+// variable for batch conversion
+boolean batch = true;
+String input_dir = "input";
+String output_dir = "output";
+
+// when not using batch conversion, specify filename here:
+String filename = "example.png";
+
 void setup() {
-  // SIZE OF THE CANVAS -- IT SHOULD MATCH w AND h
-  size(4000,2000);
+  // SIZE OF THE CANVAS -- not relevant for conversion
+  size(200,200);
   
-  // LOAD YOUR IMAGE HERE
-  input = loadImage("example.png");
+  single_file_conversion();
+ 
+
+}
+
+void batch_conversion () {
+
+}
+
+void single_file_conversion () {
+  input = loadImage(filename);
   image(input, 0, 0);
   w = input.width;
   h = input.height;
@@ -25,10 +42,6 @@ void setup() {
 
   // THIS IS WHERE THE MAGIC HAPPENS
   clear_text(w,0);
- 
-  // instead, of the vertical pass, you could use the rectangle placement below to leave some interesting black artefacts
-  //clear_text_with_rects();
-
 }
 
 
@@ -46,7 +59,7 @@ void clear_text(int x_off, int y_off) {
   for (int y = 0; y < h; y++) {
     color cur_marker = #FFFFFF;
     for (int x = 0; x < w; x++ ) {
-      color cur = get(x,y);
+      color cur = input.get(x,y);
       if ( cc(cur,#FFFFFF) ) { cur_marker = #FFFFFF; }
       else if ( !cc(cur,cur_marker) && !is_marker_present(cur_marker, x, y, hpass_window) ) { cur_marker = cur; }
       set(x+x_off,y+y_off,cur_marker);
@@ -58,40 +71,13 @@ void clear_text(int x_off, int y_off) {
   for (int x = 0; x < w; x++ ) {
     color cur_marker = #FFFFFF;
     for (int y = 0; y < h; y++) {
-      color cur = get(x+x_off,y);
+      color cur = output.get(x,y);
       if ( cc(cur,#FFFFFF) ) { cur_marker = #FFFFFF; }
-      else if ( !cc(cur,cur_marker) && !is_marker_present_down(cur_marker, w+x, y, vpass_window) ) { cur_marker = cur;}
+      else if ( !cc(cur,cur_marker) && !is_marker_present_down(cur_marker, x, y, vpass_window) ) { cur_marker = cur;}
       set(x+x_off,y+y_off,cur_marker);
       output.set(x,y,cur_marker);
     }
-  }
-  
-  
-}
-
-
-void clear_text_with_rects() {
-  noStroke();
-  int rec_size = 15;
-  for (int y = 0; y < h; y+=rec_size) {
-    for (int x = 0; x < w; x+=rec_size ) {
-      color cur = get(w+x,y);
-        if (brightness(cur) < 254 && cur != #000000) {    
-          fill(cur);
-          rect(w+x,y,rec_size,rec_size);
-      }
-    }
-  }
-  rec_size = 5;
-  for (int y = 0; y < h; y+=rec_size) {
-    for (int x = 0; x < w; x+=rec_size ) {
-      color cur = get(w+x,y);
-        if (brightness(cur) < 254 && cur != #000000) {    
-          fill(cur);
-          rect(w+x,y,rec_size,rec_size);
-      }
-    }
-  }   
+  } 
 }
 
 //============================//
@@ -115,14 +101,14 @@ boolean cc(color c1, color c2) {
 // n: number of neighbors to check to the right of x,y
 boolean is_marker_present(color m, int x, int y, int n) {
   for (int i = 1; i < n + 1; i++) {
-    color c = get(x+i, y);
+    color c = input.get(x+i, y);
     if ( cc(c, m) || cc(c, #FFFFFF) || x+i >= w) { return true; }
   }
   return false;
 }
 boolean is_marker_present_down(color m, int x, int y, int n) {
   for (int i = 1; i < n + 1; i++) {
-    color c = get(x, y+i);
+    color c = output.get(x, y+i);
     if ( cc(c, m) || cc(c, #FFFFFF) || y+i >= h) { return true; }
   }
   return false;
