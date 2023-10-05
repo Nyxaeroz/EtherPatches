@@ -1,3 +1,5 @@
+import java.io.File;
+
 PImage input;
 PImage output;
 
@@ -12,7 +14,7 @@ int hpass_window = 5;
 int vpass_window = 20;
 
 // variable for batch conversion
-boolean batch = false;
+boolean batch = true;
 String input_dir = "input";
 String output_dir = "output";
 
@@ -20,14 +22,17 @@ String output_dir = "output";
 String filename = "example.png";
 
 // flag for displaying input and output
-boolean display = true;
+boolean display = false;
 
 void setup() {
   // SIZE OF THE CANVAS -- not relevant for conversion
   size(2000,200);
   
-  if (batch) {}
-  else single_file_conversion();
+  if (batch) batch_conversion();
+  else {
+    single_file_conversion(filename); 
+    output.save(sketchPath() + "/output/PATCHED-" + filename);
+  }
  
   if (display) { 
     image(input,0,0);
@@ -38,11 +43,36 @@ void setup() {
 }
 
 void batch_conversion () {
+  print("now starting batch conversion!\n");
+  
+  File dir = new File(sketchPath() + "/" + input_dir);
+  print("using directory: " + dir + "\n");
+  
+  File[] files = dir.listFiles();
+  print("nr of files: " + files.length + "\n");
 
+  for( int i=0; i < files.length; i++ ){ 
+    String path = files[i].getAbsolutePath();
+
+    // verify file extension
+    if( path.toLowerCase().endsWith(".jpg") || path.toLowerCase().endsWith(".png") ) {
+      input = loadImage( path );
+      w = input.width;  
+      h = input.height;
+      print("image " + i + " dimensions: " + w + "x" + h + "\n");
+      
+      output = createImage(w,h,RGB); 
+      single_file_conversion(path);
+      output.save(path.replace("\\input\\", "\\output\\PATCHED-"));
+      print("saved to:", path.replace("\\input\\", "\\output\\PATCHED-"), "\n\n");
+      
+   }
+ }
 }
 
-void single_file_conversion () {
-  input = loadImage(filename);
+
+void single_file_conversion (String name) {
+  input = loadImage(name);
   w = input.width;
   h = input.height;
   print("input image width: " + w + " input image height: " + h + "\n");
@@ -50,9 +80,6 @@ void single_file_conversion () {
 
   // THIS IS WHERE THE MAGIC HAPPENS
   clear_text(w,0);
-  
-  // save output
-  savePNG();
 }
 
 
