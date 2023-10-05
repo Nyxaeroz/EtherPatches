@@ -26,7 +26,7 @@ boolean display = false;
 
 void setup() {
   // SIZE OF THE CANVAS -- not relevant for conversion
-  size(2000,200);
+  size(200,200);
   
   if (batch) batch_conversion();
   else {
