@@ -3,8 +3,7 @@ import java.io.File;
 PImage input;
 PImage output;
 
-// THESE SHOULD MATCH THE DIMENSIONS OF THE CANVAS
-// MAKE SURE ITS LARGE ENOUGH FOR THE IMAGE YOU'RE PATCHING
+// these will automatically match the dimensions of the file you're patching
 int w = 2*1920;
 int h = 1080;
 
@@ -22,11 +21,11 @@ String output_dir = "output";
 String filename = "example.png";
 
 // flag for displaying input and output
-boolean display = false;
+boolean display = true;
 
 void setup() {
   // SIZE OF THE CANVAS -- not relevant for conversion
-  size(200,200);
+  size(2000,600);
   
   if (batch) batch_conversion();
   else {
