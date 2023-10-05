@@ -56,12 +56,7 @@ void batch_conversion () {
 
     // verify file extension
     if( path.toLowerCase().endsWith(".jpg") || path.toLowerCase().endsWith(".png") ) {
-      input = loadImage( path );
-      w = input.width;  
-      h = input.height;
-      print("image " + i + " dimensions: " + w + "x" + h + "\n");
-      
-      output = createImage(w,h,RGB); 
+      // convert single file
       single_file_conversion(path);
       output.save(path.replace("\\input\\", "\\output\\PATCHED-"));
       print("saved to:", path.replace("\\input\\", "\\output\\PATCHED-"), "\n\n");
@@ -75,11 +70,11 @@ void single_file_conversion (String name) {
   input = loadImage(name);
   w = input.width;
   h = input.height;
-  print("input image width: " + w + " input image height: " + h + "\n");
+  print("converting image with dimensions: " + w + "x" + h + "\n");     
   output = createImage(w,h,RGB);
 
   // THIS IS WHERE THE MAGIC HAPPENS
-  clear_text(w,0);
+  clear_text();
 }
 
 
@@ -91,7 +86,7 @@ void single_file_conversion (String name) {
 
 // function to clear text within blocks (using a horizontal and vertical pass)
 // int x, y: starting position of new image displayed on canvas
-void clear_text(int x_off, int y_off) {
+void clear_text() {
   // horizontal pass over the colored blobs
   // should only let some edge cases through (like lines within a colored blob that start with a black pixel)
   for (int y = 0; y < h; y++) {
@@ -177,10 +172,3 @@ void savePNG() {
     
     output.save(sketchPath() + "/patches/" + i + ".png"); 
 }
-
-
-//============================//
-//                            //
-//          DRAWING           //
-//                            //
-//============================//
