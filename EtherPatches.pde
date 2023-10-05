@@ -12,19 +12,28 @@ int hpass_window = 5;
 int vpass_window = 20;
 
 // variable for batch conversion
-boolean batch = true;
+boolean batch = false;
 String input_dir = "input";
 String output_dir = "output";
 
 // when not using batch conversion, specify filename here:
 String filename = "example.png";
 
+// flag for displaying input and output
+boolean display = true;
+
 void setup() {
   // SIZE OF THE CANVAS -- not relevant for conversion
-  size(200,200);
+  size(2000,200);
   
-  single_file_conversion();
+  if (batch) {}
+  else single_file_conversion();
  
+  if (display) { 
+    image(input,0,0);
+    image(output,w,0);
+  }
+  
 
 }
 
@@ -34,7 +43,6 @@ void batch_conversion () {
 
 void single_file_conversion () {
   input = loadImage(filename);
-  image(input, 0, 0);
   w = input.width;
   h = input.height;
   print("input image width: " + w + " input image height: " + h + "\n");
@@ -42,12 +50,15 @@ void single_file_conversion () {
 
   // THIS IS WHERE THE MAGIC HAPPENS
   clear_text(w,0);
+  
+  // save output
+  savePNG();
 }
 
 
 //============================//
 //                            //
-//  MAIN CLEARING FUNCTIONS   //
+//  MAIN CLEARING FUNCTION    //
 //                            //
 //============================//
 
@@ -62,7 +73,6 @@ void clear_text(int x_off, int y_off) {
       color cur = input.get(x,y);
       if ( cc(cur,#FFFFFF) ) { cur_marker = #FFFFFF; }
       else if ( !cc(cur,cur_marker) && !is_marker_present(cur_marker, x, y, hpass_window) ) { cur_marker = cur; }
-      set(x+x_off,y+y_off,cur_marker);
       output.set(x,y,cur_marker);
     }
   }
@@ -74,7 +84,6 @@ void clear_text(int x_off, int y_off) {
       color cur = output.get(x,y);
       if ( cc(cur,#FFFFFF) ) { cur_marker = #FFFFFF; }
       else if ( !cc(cur,cur_marker) && !is_marker_present_down(cur_marker, x, y, vpass_window) ) { cur_marker = cur;}
-      set(x+x_off,y+y_off,cur_marker);
       output.set(x,y,cur_marker);
     }
   } 
@@ -114,6 +123,14 @@ boolean is_marker_present_down(color m, int x, int y, int n) {
   return false;
 }
 
+
+//============================//
+//                            //
+//     INPUT AND OUTPUT       //
+//                            //
+//============================//
+
+
 void keyReleased() {
   if (key == 's') {
      savePNG();
@@ -135,6 +152,8 @@ void savePNG() {
 }
 
 
-void draw() {
-  //image(img, 0, 0);
-}
+//============================//
+//                            //
+//          DRAWING           //
+//                            //
+//============================//
